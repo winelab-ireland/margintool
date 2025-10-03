@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WineLab Margin Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .input-section {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .input-section h2 {
+            color: #667eea;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 0.95em;
+        }
+        
+        select, input {
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+        
+        select:focus, input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        input[type="number"] {
+            font-size: 1.1em;
+        }
+        
+        .result-box {
+            background: #e8f5e9;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-box h3 {
+            color: #2e7d32;
+            margin-bottom: 15px;
+        }
+        
+        .result-stats {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .stat {
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2e7d32;
+        }
+        
+        .compare-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2em;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .compare-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .compare-button:active {
+            transform: translateY(0);
+        }
+        
+        .comparison-section {
+            display: none;
+            margin-top: 40px;
+        }
+        
+        .comparison-section h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .product-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+        
+        .product-card.user-product {
+            background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+            border: 3px solid #fdcb6e;
+        }
+        
+        .product-image {
+            width: 100%;
+            height: 200px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 3em;
+        }
+        
+        .product-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .product-details {
+            margin-bottom: 15px;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .detail-label {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .margin-highlight {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .margin-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .margin-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .custom-price-input {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px dashed #ddd;
+        }
+        
+        .custom-price-input input {
+            width: 100%;
+            margin-top: 8px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍷 WineLab Margin Calculator</h1>
+        <p class="subtitle">Compare your current products with WineLab's premium options</p>
+        
+        <div class="input-section">
+            <h2>Your Current Product</h2>
+            
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="productSize">Product Size</label>
+                    <select id="productSize">
+                        <option value="">Select size...</option>
+                        <option value="50000">50L Keg</option>
+                        <option value="30000">30L Keg</option>
+                        <option value="24000">24L Keg</option>
+                        <option value="20000">20L Keg</option>
+                        <option value="5000">5L Keg</option>
+                        <option value="3000">3L Bag</option>
+                        <option value="750">750ml Bottle</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productCost">Product Cost (€, ex VAT)</label>
+                    <input type="number" id="productCost" placeholder="e.g., 304.00" step="0.01" min="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="servingSize">Serving Size</label>
+                    <select id="servingSize">
+                        <option value="">Select serving...</option>
+                        <option value="568">Pint (568ml)</option>
+                        <option value="284">Half Pint (284ml)</option>
+                        <option value="750">Wine Bottle (750ml)</option>
+                        <option value="175">Glass (175ml)</option>
+                        <option value="150">Glass (150ml)</option>
+                        <option value="125">Glass (125ml)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="sellPrice">Your Sell Price (€, inc VAT)</label>
+                    <input type="number" id="sellPrice" placeholder="e.g., 12.00" step="0.01" min="0">
+                </div>
+            </div>
+            
+            <div class="result-box" id="userResultBox">
+                <h3>Your Product Margins</h3>
+                <div class="result-stats">
+                    <div class="stat">
+                        <div class="stat-label">Gross Profit %</div>
+                        <div class="stat-value" id="userGP">-</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-label">Cash Margin (ex VAT)</div>
+                        <div class="stat-value" id="userCashMargin">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="compare-button" onclick="showComparison()">
+                🔍 See What Margin You Could Be Banking
+            </button>
+        </div>
+        
+        <div class="comparison-section" id="comparisonSection">
+            <h2>💰 Margin Comparison</h2>
+            
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // WineLab Products Database (all costs ex VAT)
+        const winelabProducts = [
+            {
+                name: "Pornstar Martini (On Tap)",
+                emoji: "🍸",
+                containerSize: 20000, // ml
+                cost: 304, // ex VAT
+                servingSize: 150, // ml
+                defaultSellPrice: 12, // inc VAT
+                defaultGP: 75,
+                defaultCashMargin: 7.30
+            },
+            {
+                name: "Pornstar Martini (Bottle)",
+                emoji: "🍾",
+                containerSize: 1000, // ml
+                cost: 22.50, // ex VAT
+                servingSize: 125, // ml
+                defaultSellPrice: 12, // inc VAT
+                defaultGP: 71,
+                defaultCashMargin: 6.95
+            },
+            {
+                name: "Frizzante Glass (On Tap)",
+                emoji: "🥂",
+                containerSize: 20000, // ml
+                cost: 250, // ex VAT
+                servingSize: 150, // ml
+                defaultSellPrice: 9, // inc VAT
+                defaultGP: 75,
+                defaultCashMargin: 5.45
+            },
+            {
+                name: "House Sauvignon Blanc (On Tap)",
+                emoji: "🍷",
+                containerSize: 30000, // ml
+                cost: 304, // ex VAT
+                servingSize: 150, // ml
+                defaultSellPrice: 8, // inc VAT
+                defaultGP: 77,
+                defaultCashMargin: 4.98
+            }
+        ];
+        
+        // Calculate margins
+        function calculateMargins(costPerServe, sellPriceIncVAT) {
+            const sellPriceExVAT = sellPriceIncVAT / 1.23;
+            const cashMargin = sellPriceExVAT - costPerServe;
+            const gp = (cashMargin / sellPriceExVAT) * 100;
+            
+            return {
+                gp: gp.toFixed(1),
+                cashMargin: cashMargin.toFixed(2),
+                sellPriceExVAT: sellPriceExVAT.toFixed(2)
+            };
+        }
+        
+        // Update user product calculations
+        function updateUserProduct() {
+            const productSize = parseFloat(document.getElementById('productSize').value);
+            const productCost = parseFloat(document.getElementById('productCost').value);
+            const servingSize = parseFloat(document.getElementById('servingSize').value);
+            const sellPrice = parseFloat(document.getElementById('sellPrice').value);
+            
+            if (productSize && productCost && servingSize && sellPrice) {
+                const costPerServe = (productCost / productSize) * servingSize;
+                const margins = calculateMargins(costPerServe, sellPrice);
+                
+                document.getElementById('userGP').textContent = margins.gp + '%';
+                document.getElementById('userCashMargin').textContent = '€' + margins.cashMargin;
+                document.getElementById('userResultBox').style.display = 'block';
+            }
+        }
+        
+        // Add event listeners to inputs
+        document.getElementById('productSize').addEventListener('change', updateUserProduct);
+        document.getElementById('productCost').addEventListener('input', updateUserProduct);
+        document.getElementById('servingSize').addEventListener('change', updateUserProduct);
+        document.getElementById('sellPrice').addEventListener('input', updateUserProduct);
+        
+        // Show comparison section
+        function showComparison() {
+            const productSize = parseFloat(document.getElementById('productSize').value);
+            const productCost = parseFloat(document.getElementById('productCost').value);
+            const servingSize = parseFloat(document.getElementById('servingSize').value);
+            const sellPrice = parseFloat(document.getElementById('sellPrice').value);
+            
+            if (!productSize || !productCost || !servingSize || !sellPrice) {
+                alert('Please fill in all fields for your current product first!');
+                return;
+            }
+            
+            // Calculate user product
+            const userCostPerServe = (productCost / productSize) * servingSize;
+            const userMargins = calculateMargins(userCostPerServe, sellPrice);
+            
+            // Build comparison grid
+            let html = '';
+            
+            // User's product card
+            html += `
+                <div class="product-card user-product">
+                    <div class="product-image">📦</div>
+                    <div class="product-name">Your Current Product</div>
+                    <div class="product-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Serving Size</span>
+                            <span class="detail-value">${servingSize}ml</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Sell Price (inc VAT)</span>
+                            <span class="detail-value">€${sellPrice.toFixed(2)}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Sell Price (ex VAT)</span>
+                            <span class="detail-value">€${userMargins.sellPriceExVAT}</span>
+                        </div>
+                    </div>
+                    <div class="margin-highlight">
+                        <div class="margin-row">
+                            <span class="detail-label">Gross Profit</span>
+                            <span class="detail-value" style="color: #2e7d32; font-size: 1.2em;">${userMargins.gp}%</span>
+                        </div>
+                        <div class="margin-row">
+                            <span class="detail-label">Cash Margin</span>
+                            <span class="detail-value" style="color: #2e7d32; font-size: 1.2em;">€${userMargins.cashMargin}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // WineLab products
+            winelabProducts.forEach((product, index) => {
+                const costPerServe = (product.cost / product.containerSize) * product.servingSize;
+                const margins = calculateMargins(costPerServe, product.defaultSellPrice);
+                
+                html += `
+                    <div class="product-card">
+                        <div class="product-image">${product.emoji}</div>
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Serving Size</span>
+                                <span class="detail-value">${product.servingSize}ml</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Sell Price (inc VAT)</span>
+                                <span class="detail-value">€${product.defaultSellPrice.toFixed(2)}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Sell Price (ex VAT)</span>
+                                <span class="detail-value">€${margins.sellPriceExVAT}</span>
+                            </div>
+                        </div>
+                        <div class="margin-highlight">
+                            <div class="margin-row">
+                                <span class="detail-label">Gross Profit</span>
+                                <span class="detail-value" style="color: #2e7d32; font-size: 1.2em;" id="gp-${index}">${margins.gp}%</span>
+                            </div>
+                            <div class="margin-row">
+                                <span class="detail-label">Cash Margin</span>
+                                <span class="detail-value" style="color: #2e7d32; font-size: 1.2em;" id="margin-${index}">€${margins.cashMargin}</span>
+                            </div>
+                        </div>
+                        <div class="custom-price-input">
+                            <label style="font-size: 0.9em; color: #666;">Try your own sell price (inc VAT):</label>
+                            <input type="number" 
+                                   placeholder="€${product.defaultSellPrice.toFixed(2)}" 
+                                   step="0.01" 
+                                   min="0"
+                                   onchange="updateWinelabMargin(${index}, this.value, ${costPerServe})">
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('productsGrid').innerHTML = html;
+            document.getElementById('comparisonSection').style.display = 'block';
+            document.getElementById('comparisonSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Update WineLab product margin when custom price is entered
+        function updateWinelabMargin(index, newSellPrice, costPerServe) {
+            if (!newSellPrice || newSellPrice <= 0) return;
+            
+            const margins = calculateMargins(costPerServe, parseFloat(newSellPrice));
+            document.getElementById(`gp-${index}`).textContent = margins.gp + '%';
+            document.getElementById(`margin-${index}`).textContent = '€' + margins.cashMargin;
+        }
+    </script>
+</body>
+</html>
